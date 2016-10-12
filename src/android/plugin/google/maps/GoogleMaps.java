@@ -1930,6 +1930,14 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
 
     if (title != null) {
       if (title.indexOf("data:image/") > -1 && title.indexOf(";base64,") > -1) {
+
+        // Sin borde, el infowindow de fzones no lleva padding
+        windowLayer = new LinearLayout(activity);
+        windowLayer.setOrientation(LinearLayout.VERTICAL);
+        LayoutParams layoutParams2 = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        layoutParams2.gravity = Gravity.BOTTOM | Gravity.CENTER;
+        windowLayer.setLayoutParams(layoutParams2);
+
         String[] tmp = title.split(",");
         Bitmap image = PluginUtil.getBitmapFromBase64encodedImage(tmp[1]);
         image = PluginUtil.scaleBitmapForDevice(image);
@@ -2006,9 +2014,12 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
     return windowLayer;
   }
 
+  // Este es el que devuelve el infowindow completo; así que dibujamos el infowindow sin el borde
+  // Ver https://developers.google.com/maps/documentation/android-api/infowindows
+  // 
   @Override
   public View getInfoWindow(Marker marker) {
-    return null;
+    return this.getInfoContents(marker);
   }
 
   /**
