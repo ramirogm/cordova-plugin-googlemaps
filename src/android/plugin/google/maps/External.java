@@ -13,7 +13,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-public class External extends CordovaPlugin {
+/**
+ * Exportado como plugin a JS
+ *
+ * Permite llamar a la app de navegación nativa
+ *
+ */public class External extends CordovaPlugin {
 
   private enum TRAVEL_MODE {
     driving,

@@ -97,7 +97,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-
+/**
+ * Exportado como plugin a JS
+ *
+ * Las operaciones se llaman mediante reflection.
+ * Ver el método execute()
+ * Algunas hacen referencia a métodos de esta clase y otros a "Plugins" de este plugin.
+ * Ejemplo, si desde js invoca a exec Marker.createMarker
+ * el método loadPlugin levanta las clases Plugin* via reflection, así
+ * que se traduce a ejecutar el método createMarker de PluginMarker
+ *
+ *
+ *
+ */
 @SuppressWarnings("deprecation")
 public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, OnMarkerClickListener,
       OnInfoWindowClickListener, OnMapClickListener, OnMapLongClickListener,
@@ -204,7 +216,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
               Method method = webView.getClass().getMethod("reload");
               method.invoke(webView);
             } catch (Exception e) {
-              e.printStackTrace();
+              Log.e(TAG,e.getMessage(),e);
             }
         }
       }
@@ -338,7 +350,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
        * of following in ConnectionResult: SUCCESS, SERVICE_MISSING,
        * SERVICE_VERSION_UPDATE_REQUIRED, SERVICE_DISABLED, SERVICE_INVALID.
        */
-      Log.e("CordovaLog", "---Google Play Services is not available: " + GooglePlayServicesUtil.getErrorString(checkGooglePlayServices));
+      Log.e(TAG, "---Google Play Services is not available: " + GooglePlayServicesUtil.getErrorString(checkGooglePlayServices));
 
       Dialog errorDialog = null;
       try {
@@ -627,7 +639,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
           }
 
         } catch (Exception e) {
-          Log.d("GoogleMaps", "------->error");
+          Log.d(TAG, "------->error");
           callbackContext.error(e.getMessage());
         }
       }
@@ -916,7 +928,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
       @SuppressWarnings({ "rawtypes" })
       Class GoogleMapsClass = Class.forName("com.google.android.gms.maps.GoogleMap");
     } catch (Exception e) {
-      Log.e("GoogleMaps", "Error", e);
+      Log.e(TAG, "Error", e);
       callbackContext.error(e.getMessage());
       return;
     }
@@ -1003,7 +1015,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
 
           @Override
           public void onConnected(Bundle connectionHint) {
-            Log.e("CordovaLog", "===> onConnected");
+            Log.e(TAG, "===> onConnected");
             GoogleMaps.this.sendNoResult(callbackContext);
 
             _checkLocationSettings(enableHighAccuracy, callbackContext);
@@ -1011,7 +1023,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
 
           @Override
           public void onConnectionSuspended(int cause) {
-            Log.e("CordovaLog", "===> onConnectionSuspended");
+            Log.e(TAG, "===> onConnectionSuspended");
            }
 
         })
@@ -1019,7 +1031,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
 
           @Override
           public void onConnectionFailed(ConnectionResult result) {
-            Log.e("CordovaLog", "===> onConnectionFailed");
+            Log.e(TAG, "===> onConnectionFailed");
 
             PluginResult tmpResult = new PluginResult(PluginResult.Status.ERROR, result.toString());
             tmpResult.setKeepCallback(false);
@@ -1675,11 +1687,11 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
     super.onActivityResult(requestCode, resultCode, data);
 
     if (!bufferForLocationDialog.containsKey("bundle_" + requestCode)) {
-      Log.e("CordovaLog", "no key");
+      Log.e(TAG, "no key");
       return;
     }
     Bundle query = bufferForLocationDialog.get("bundle_" + requestCode);
-    Log.d("CordovaLog", "====> onActivityResult (" + resultCode + ")");
+    Log.d(TAG, "====> onActivityResult (" + resultCode + ")");
 
     switch (query.getInt("type")) {
       case ACTIVITY_LOCATION_DIALOG:
@@ -1710,7 +1722,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
     List<String> providers = locationManager.getAllProviders();
     int availableProviders = 0;
     if (isDebug) {
-      Log.d("CordovaLog", "---debug at getMyLocation(available providers)--");
+      Log.d(TAG, "---debug at getMyLocation(available providers)--");
     }
     Iterator<String> iterator = providers.iterator();
     String provider;
@@ -1722,7 +1734,7 @@ public class GoogleMaps extends CordovaPlugin implements View.OnClickListener, O
         availableProviders++;
       }
       if (isDebug) {
-        Log.d("CordovaLog", "   " + provider + " = " + (isAvailable ? "" : "not ") + "available");
+        Log.d(TAG, "   " + provider + " = " + (isAvailable ? "" : "not ") + "available");
       }
     }
     if (availableProviders == 0) {
